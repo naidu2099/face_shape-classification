@@ -44,13 +44,13 @@ Since we added a custom user model, you need to reset the database.
 
 ## Default Admin Credentials
 
-- Username: `admin`
-- Password: `admin`
+- Username: `mani`
+- Password: `Mani12@`
 
 ## Test the Application
 
 1. **Register a new user** - account will be inactive
-2. **Login as admin** - use admin/admin
+2. **Login as admin** - use mani/Mani12@
 3. **Activate the user** - go to admin dashboard → view users → activate
 4. **Login as user** - now the user can access the dashboard
 5. **Upload photo** - test face analysis feature

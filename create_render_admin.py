@@ -7,16 +7,25 @@ django.setup()
 from accounts.models import CustomUser
 
 def create_admin():
-    username = 'admin'
-    email = 'admin@example.com'
-    password = 'admin123'
+    username = 'mani'
+    email = 'mani@example.com'
+    password = 'Mani12@'
+    full_name = 'Mani Administrator'
     
-    if not CustomUser.objects.filter(username=username).exists():
-        print(f"Creating superuser {username}...")
-        CustomUser.objects.create_superuser(username, email, password)
-        print("Superuser created successfully!")
+    user, created = CustomUser.objects.get_or_create(
+        username=username, 
+        defaults={'email': email, 'full_name': full_name}
+    )
+    user.set_password(password)
+    user.is_staff = True
+    user.is_superuser = True
+    user.save()
+    
+    if created:
+        print(f"Superuser {username} created successfully!")
     else:
-        print(f"Superuser {username} already exists.")
+        print(f"Superuser {username} updated successfully!")
 
 if __name__ == '__main__':
     create_admin()
+

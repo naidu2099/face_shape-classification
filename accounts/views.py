@@ -82,7 +82,7 @@ def admin_login(request):
         password = request.POST.get('password')
 
         # Fixed admin credentials
-        if username == 'admin' and password == 'admin':
+        if username == 'mani' and password == 'Mani12@':
             user = authenticate(request, username=username, password=password)
             if user is not None and user.is_superuser:
                 login(request, user)
