@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Style Studio - Discover Your Best Look</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --primary-glow: rgba(0, 242, 255, 0.4);
+            --secondary: #7b2cbf;
+            --bg: #050608;
+            --panel: rgba(255, 255, 255, 0.03);
+            --text: #ffffff;
+            --text-dim: #8a9ba8;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .background-blob {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            z-index: -1;
+            filter: blur(50px);
+            opacity: 0.3;
+        }
+
+        .blob-1 { top: -100px; left: -100px; }
+        .blob-2 { bottom: -100px; right: -100px; }
+
+        header {
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 900;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+
+        .upload-container {
+            background: var(--panel);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3rem;
+            border-radius: 2rem;
+            width: 100%;
+            max-width: 500px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .upload-container:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .upload-box {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            position: relative;
+        }
+
+        .upload-box:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .upload-box i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .upload-box p {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .upload-box input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .btn-generate {
+            display: block;
+            width: 100%;
+            padding: 1.2rem;
+            margin-top: 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.3);
+        }
+
+        .btn-generate:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 30px rgba(138, 43, 226, 0.5);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading-screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader {
+            width: 100px;
+            height: 100px;
+            border: 5px solid var(--panel);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .flashes {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 1rem;
+            color: #ff4b2b;
+            font-weight: 600;
+        }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .preview-container {
+            display: none;
+            margin-top: 1.5rem;
+            width: 100%;
+            max-height: 200px;
+            overflow: hidden;
+            border-radius: 1rem;
+        }
+
+        #image-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-blob blob-1"></div>
+    <div class="background-blob blob-2"></div>
+
+    <header>
+        <div class="logo">
+            <i class="fas fa-magic"></i>
+            <span>AI STYLE STUDIO</span>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1 style="letter-spacing: -2px;">FUTURE <span>LOOK</span></h1>
+            <p>High-fidelity AI stylistic projection. Real-time facial analysis and aesthetic synthesis.</p>
+        </section>
+
+        {% if messages %}
+            <ul class="flashes">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form action="{% url 'generate' %}" method="post" enctype="multipart/form-data" class="upload-container" id="upload-form">
+            {% csrf_token %}
+            <div class="upload-box" id="drop-zone">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drag or Upload your photo</p>
+                <input type="file" name="user_image" id="file-input" accept="image/png, image/jpeg" required>
+            </div>
+            
+            <div class="preview-container" id="preview-wrapper">
+                <img id="image-preview" src="#" alt="Preview">
+            </div>
+
+            <div class="gender-selection" style="margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                <p style="margin: 0; font-weight: 600; color: var(--text-dim);">Select Style Gender (Optional)</p>
+                <div class="segmented-control" style="display: flex; background: rgba(255, 255, 255, 0.05); padding: 0.25rem; border-radius: 0.75rem; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <label style="cursor: pointer; padding: 0.5rem 1.5rem; border-radius: 0.5rem; transition: all 0.3s ease;" class="gender-label">
+                        <input type="radio" name="user_gender" value="auto" checked style="display: none;">
+                        <span>Auto</span>
+                    </label>
+                    <label style="cursor: pointer; padding: 0.5rem 1.5rem; border-radius: 0.5rem; transition: all 0.3s ease;" class="gender-label">
+                        <input type="radio" name="user_gender" value="Male" style="display: none;">
+                        <span>Male</span>
+                    </label>
+                    <label style="cursor: pointer; padding: 0.5rem 1.5rem; border-radius: 0.5rem; transition: all 0.3s ease;" class="gender-label">
+                        <input type="radio" name="user_gender" value="Female" style="display: none;">
+                        <span>Female</span>
+                    </label>
+                </div>
+            </div>
+
+            <style>
+                .gender-label:has(input:checked) {
+                    background: var(--primary);
+                    color: white;
+                    box-shadow: 0 4px 10px var(--primary-glow);
+                }
+                .gender-label:not(:has(input:checked)) {
+                    color: var(--text-dim);
+                }
+                .gender-label:not(:has(input:checked)):hover {
+                    color: white;
+                    background: rgba(255, 255, 255, 0.05);
+                }
+            </style>
+
+            <button type="submit" class="btn-generate" id="submit-btn" disabled>
+                GENERATE MY STYLE
+            </button>
+        </form>
+    </main>
+
+    <div class="loading-screen" id="loading-overlay">
+        <div class="loader"></div>
+        <div class="loading-text">Analyzing Face & Stylizing...</div>
+        <p style="color: var(--text-dim); margin-top: 1rem;">This usually takes 10-20 seconds</p>
+    </div>
+
+    <footer>
+        &copy; 2026 AI STYLE STUDIO // NEURAL INTERFACE V5.0
+    </footer>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const previewWrapper = document.getElementById('preview-wrapper');
+        const imagePreview = document.getElementById('image-preview');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const uploadForm = document.getElementById('upload-form');
+
+        fileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    previewWrapper.style.display = 'block';
+                    submitBtn.disabled = false;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        uploadForm.addEventListener('submit', function() {
+            loadingOverlay.style.display = 'flex';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your AI Style Report - AI Style Studio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --primary-glow: rgba(0, 242, 255, 0.4);
+            --bg: #050608;
+            --panel: rgba(255, 255, 255, 0.03);
+            --text: #ffffff;
+            --text-dim: #8a9ba8;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(10, 10, 12, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .btn-back {
+            padding: 0.6rem 1.2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .report-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .face-shape-badge {
+            display: inline-block;
+            padding: 0.6rem 2rem;
+            background: var(--primary);
+            color: #000;
+            border-radius: 4px; /* Sharp futuristic lines */
+            font-weight: 800;
+            font-size: 1rem;
+            box-shadow: 0 0 20px var(--primary-glow);
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 3rem;
+            align-items: flex-start;
+        }
+
+        @media (max-width: 900px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-label {
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .image-wrapper {
+            position: relative;
+            aspect-ratio: 1 / 1.2;
+            overflow: hidden;
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .image-wrapper:hover img {
+            transform: scale(1.05);
+        }
+
+        .result-card {
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .info-panel {
+            padding: 2rem;
+            background: var(--panel);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 2rem;
+        }
+
+        .info-panel h3 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+        }
+
+        .vision-text {
+            line-height: 1.6;
+            font-size: 1.1rem;
+            color: #efefef;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 1.2rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-download {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.4);
+        }
+
+        .btn-try-again {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-try-again:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tips-section {
+            margin-top: 3rem;
+            padding-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .tip-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tip-item h4 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="{% url 'index' %}" class="logo">
+            <i class="fas fa-magic"></i>
+            <span>AI STYLE STUDIO</span>
+        </a>
+        <a href="{% url 'index' %}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> New Session
+        </a>
+    </header>
+
+    <main>
+        <div class="report-header">
+            <h1>Your Style Transformation</h1>
+            <p>Based on your unique facial structure, we've identified you have a:</p>
+            <div class="face-shape-badge">
+                <i class="fas fa-user-check"></i> {{ face_shape }} Face Shape
+            </div>
+        </div>
+
+        <div class="comparison-grid">
+            <div class="card">
+                <div class="card-label">
+                    <i class="fas fa-camera"></i> Original Photo
+                </div>
+                <div class="image-wrapper">
+                    <img src="{% static original_image %}" alt="Original">
+                </div>
+            </div>
+
+            <div class="card result-card">
+                <div class="card-label">
+                    <i class="fas fa-sparkles"></i> AI Reimagined Look
+                </div>
+                <div class="image-wrapper">
+                    <img src="{% static generated_image %}" alt="Result" id="result-img">
+                </div>
+                <div class="action-bar" style="padding: 1.5rem;">
+                    <a href="{% static generated_image %}" download="ai_style_transformation.jpg" class="btn-action btn-download">
+                        <i class="fas fa-download"></i> DOWNLOAD RESULT
+                    </a>
+                    <a href="{% url 'regenerate' %}?image={{ original_image }}" class="btn-action btn-try-again">
+                        <i class="fas fa-redo"></i> REGENERATE
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h3><i class="fas fa-eye"></i> Stylist's Vision</h3>
+            <div class="vision-text">
+                {{ style_vision | safe }}
+            </div>
+        </div>
+
+        <div class="tips-section">
+            <h2 style="margin-bottom: 2rem;">Personalized Recommendations</h2>
+            <div class="vision-text">
+                {{ beauty_tips | safe }}
+            </div>
+        </div>
+    </main>
+
+    <footer style="padding: 4rem; text-align: center; color: var(--text-dim); font-size: 0.8rem; letter-spacing: 1px;">
+        &copy; 2026 AI STYLE STUDIO // AUTHENTICITY VERIFIED // NEURAL V5
+    </footer>
+</body>
+</html>

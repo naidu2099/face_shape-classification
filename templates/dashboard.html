@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AI Style Studio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .dashboard-wrapper {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .upload-area {
+            border: 2px dashed var(--glass-border);
+            border-radius: 16px;
+            padding: 60px 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin: 30px 0;
+            position: relative;
+        }
+        .upload-area:hover {
+            border-color: var(--accent-color);
+            background: rgba(123, 44, 191, 0.05);
+            animation: pulseGlow 2s infinite;
+        }
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .file-input {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .file-name-display {
+            margin-top: 15px;
+            font-weight: 500;
+            color: var(--accent-color);
+            display: none;
+        }
+        .loading-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+            margin-top: 15px;
+        }
+        .loading-subtext {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        /* Color selection */
+        .gender-select {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+        .gender-option {
+            flex: 1;
+            position: relative;
+        }
+        .gender-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .gender-label {
+            display: block;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .gender-option input:checked + .gender-label {
+            background: rgba(123, 44, 191, 0.2);
+            border-color: var(--accent-color);
+            color: white;
+            box-shadow: 0 0 15px rgba(123, 44, 191, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <nav class="navbar">
+        <h1>AI Style Studio ✨</h1>
+        <div>
+            <span style="margin-right: 20px; color: var(--text-secondary);">Logged in as <b>{{ username }}</b></span>
+            {% if session.get('role') == 'admin' %}
+            <a href="/admin" class="btn" style="padding: 8px 16px; width: auto; font-size: 14px; margin-right: 10px; background: var(--color-primary, #7b2cbf);">Admin Panel</a>
+            {% endif %}
+            <a href="/logout" class="btn btn-danger" style="padding: 8px 16px; width: auto; font-size: 14px;">Logout</a>
+        </div>
+    </nav>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Analyzing your photo...</div>
+        <div class="loading-subtext">This process may take 15-30 seconds. Feel free to grab a coffee! ☕</div>
+    </div>
+
+    <div class="dashboard-wrapper">
+        <div class="glass-panel">
+            <h2>Transform Your Look 🚀</h2>
+            <p>Upload a clear, front-facing portrait to instantly generate 4 realistic styles and receive personalized beauty recommendations from our Gemini AI.</p>
+
+            <div class="flash-messages mt-4">
+                {% with messages = get_flashed_messages() %}
+                  {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-error">{{ message }}</div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+            </div>
+
+            <form action="/generate" method="POST" enctype="multipart/form-data" id="uploadForm">
+                <div class="upload-area" id="dropzone">
+                    <span class="upload-icon">📸</span>
+                    <h3 style="margin-bottom: 5px;">Drag & Drop or Click to Upload</h3>
+                    <p>Supported formats: JPG, PNG, JPEG</p>
+                    <input type="file" id="file-upload" name="user_image" class="file-input" accept="image/png, image/jpeg, image/jpg" required onchange="updateFileName(this)">
+                    <div class="file-name-display" id="fileNameDisplay"></div>
+                </div>
+                
+                <div class="gender-select">
+                    <div class="gender-option">
+                        <input type="radio" id="gender-male" name="gender" value="male" checked>
+                        <label for="gender-male" class="gender-label">🙋‍♂️ Male</label>
+                    </div>
+                    <div class="gender-option">
+                        <input type="radio" id="gender-female" name="gender" value="female">
+                        <label for="gender-female" class="gender-label">🙋‍♀️ Female</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" id="generateBtn" style="opacity: 0.5; pointer-events: none;">Generate My Styles</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function updateFileName(input) {
+            const display = document.getElementById('fileNameDisplay');
+            const btn = document.getElementById('generateBtn');
+            
+            if (input.files && input.files[0]) {
+                display.style.display = 'block';
+                display.innerText = "Selected: " + input.files[0].name;
+                
+                // Enable button
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
+            } else {
+                display.style.display = 'none';
+                btn.style.opacity = '0.5';
+                btn.style.pointerEvents = 'none';
+            }
+        }
+
+        // Show loading animation on submit
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            
+            // Nice touch: dynamically change the loading text to show progress illusion
+            setTimeout(() => document.getElementById('loadingText').innerText = "Connecting to Replicate AI...", 4000);
+            setTimeout(() => document.getElementById('loadingText').innerText = "Generating slick hairstyles...", 10000);
+            setTimeout(() => document.getElementById('loadingText').innerText = "Almost done applying eyewear...", 18000);
+        });
+    </script>
+</body>
+</html>

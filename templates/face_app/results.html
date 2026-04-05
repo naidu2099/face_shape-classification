@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Results - Face Analysis{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'user_dashboard' %}">
+            <i class="bi bi-stars me-2"></i>Face Analysis
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'user_dashboard' %}">
+                        <i class="bi bi-house-door me-1"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="#">
+                        <i class="bi bi-stars me-1"></i>Results
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle me-1"></i>{{ user.full_name }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" style="background: rgba(21, 25, 50, 0.95); border: 1px solid rgba(0, 212, 255, 0.2);">
+                        <li><a class="dropdown-item" href="{% url 'user_dashboard' %}" style="color: #a0aec0;"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                        <li><hr class="dropdown-divider" style="border-color: rgba(255, 255, 255, 0.1);"></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}" style="color: #ff006e;"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <div style="animation: fadeInUp 0.6s ease-out;">
+                <h1 class="display-5" style="background: linear-gradient(135deg, #00d4ff, #7b2ff7, #ff006e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">
+                    <i class="bi bi-stars me-2"></i>Your Face Analysis Results
+                </h1>
+                <p style="color: #a0aec0; font-size: 1.2rem;">AI-powered beauty insights just for you</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Face Shape -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card" style="animation: fadeInUp 0.6s ease-out; animation-delay: 0.1s;">
+                <div class="card-body text-center p-5">
+                    <h3 class="mb-3" style="color: #a0aec0;">
+                        <i class="bi bi-diagram-3 me-2" style="color: #00d4ff;"></i>Detected Face Shape
+                    </h3>
+                    <h2 style="background: linear-gradient(135deg, #00d4ff, #7b2ff7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; font-size: 3rem;">{{ face_shape }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Images Comparison -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card h-100" style="animation: fadeInUp 0.6s ease-out; animation-delay: 0.2s;">
+                <div class="card-header" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 212, 255, 0.1));">
+                    <h5 class="mb-0" style="color: #00d4ff;">
+                        <i class="bi bi-image me-2"></i>Original Photo
+                    </h5>
+                </div>
+                <div class="card-body text-center p-4">
+                    <img src="{% static original_image %}" alt="Original" class="img-fluid rounded" style="max-height: 400px; border: 2px solid rgba(0, 212, 255, 0.3); box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card h-100" style="animation: fadeInUp 0.6s ease-out; animation-delay: 0.3s;">
+                <div class="card-header" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));">
+                    <h5 class="mb-0" style="color: #10b981;">
+                        <i class="bi bi-magic me-2"></i>Generated Style
+                    </h5>
+                </div>
+                <div class="card-body text-center p-4">
+                    {% if generated_image %}
+                    <img src="{% static generated_image %}" alt="Generated" class="img-fluid rounded" style="max-height: 400px; border: 2px solid rgba(16, 185, 129, 0.3); box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);">
+                    {% else %}
+                    <p style="color: #a0aec0;">No generated image available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Beauty Tips -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card" style="animation: fadeInUp 0.6s ease-out; animation-delay: 0.4s;">
+                <div class="card-header" style="background: linear-gradient(135deg, rgba(123, 47, 247, 0.2), rgba(123, 47, 247, 0.1));">
+                    <h4 class="mb-0" style="color: #7b2ff7;">
+                        <i class="bi bi-palette me-2"></i>Beauty Tips & Recommendations
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="content-area">
+                        {{ beauty_tips|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Style Vision -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card" style="animation: fadeInUp 0.6s ease-out; animation-delay: 0.5s;">
+                <div class="card-header" style="background: linear-gradient(135deg, rgba(255, 0, 110, 0.2), rgba(255, 0, 110, 0.1));">
+                    <h4 class="mb-0" style="color: #ff006e;">
+                        <i class="bi bi-eye me-2"></i>Style Vision
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="content-area">
+                        {{ style_vision|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <a href="{% url 'regenerate' %}?image={{ original_image }}" class="btn btn-primary btn-lg me-2 px-5 py-3">
+                <i class="bi bi-arrow-clockwise me-2"></i>Regenerate
+            </a>
+            <a href="{% url 'user_dashboard' %}" class="btn btn-secondary btn-lg px-5 py-3">
+                <i class="bi bi-house-door me-2"></i>Back to Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .content-area {
+        line-height: 1.8;
+        color: #a0aec0;
+    }
+    .content-area h1, .content-area h2, .content-area h3 {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #00d4ff, #7b2ff7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 700;
+    }
+    .content-area ul, .content-area ol {
+        margin-left: 1.5rem;
+    }
+    .content-area p {
+        margin-bottom: 1rem;
+    }
+    .content-area strong {
+        color: #ffffff;
+    }
+    .dropdown-item:hover {
+        background: rgba(0, 212, 255, 0.1);
+        color: #00d4ff !important;
+    }
+</style>
+{% endblock %}

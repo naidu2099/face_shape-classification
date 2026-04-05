@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Face Analysis App{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <i class="bi bi-stars me-2"></i>Face Analysis
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'home' %}">
+                        <i class="bi bi-house-door me-1"></i>Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">
+                        <i class="bi bi-person-plus me-1"></i>Register
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin_login' %}" style="color: #ff006e !important;">
+                        <i class="bi bi-shield-lock me-1"></i>Admin
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="container">
+    <div class="row min-vh-100 align-items-center">
+        <div class="col-lg-6 mb-5 mb-lg-0">
+            <div style="animation: fadeInLeft 1s ease-out;">
+                <h1 class="display-3 mb-4" style="background: linear-gradient(135deg, #00d4ff, #7b2ff7, #ff006e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; line-height: 1.2;">
+                    Discover Your Beauty Potential
+                </h1>
+                <p class="lead mb-4" style="color: #a0aec0; font-size: 1.3rem;">
+                    AI-powered face analysis with personalized beauty recommendations and style insights
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'register' %}" class="btn btn-primary btn-lg px-5 py-3">
+                        <i class="bi bi-rocket-takeoff me-2"></i>Get Started
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-secondary btn-lg px-5 py-3">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div style="animation: fadeInRight 1s ease-out;">
+                <div class="position-relative">
+                    <div style="position: absolute; top: -20px; left: -20px; width: 100%; height: 100%; background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(123, 47, 247, 0.2)); border-radius: 30px; filter: blur(40px);"></div>
+                    <div class="card position-relative" style="border: 2px solid rgba(0, 212, 255, 0.3);">
+                        <div class="card-body p-5 text-center">
+                            <i class="bi bi-stars" style="font-size: 8rem; background: linear-gradient(135deg, #00d4ff, #7b2ff7, #ff006e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulse 2s ease-in-out infinite;"></i>
+                            <h3 class="mt-4" style="color: #ffffff;">AI-Powered Analysis</h3>
+                            <p style="color: #a0aec0;">Advanced facial recognition technology</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="display-5 mb-3" style="background: linear-gradient(135deg, #00d4ff, #7b2ff7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">
+            Amazing Features
+        </h2>
+        <p style="color: #a0aec0; font-size: 1.2rem;">Everything you need for personalized beauty insights</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 text-center" style="animation: fadeInUp 0.6s ease-out; animation-delay: 0.1s;">
+                <div class="card-body p-4">
+                    <div style="animation: float 3s ease-in-out infinite;">
+                        <i class="bi bi-diagram-3" style="font-size: 4rem; background: linear-gradient(135deg, #00d4ff, #7b2ff7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                    </div>
+                    <h4 class="mt-4 mb-3" style="color: #ffffff;">Face Shape Detection</h4>
+                    <p style="color: #a0aec0;">Accurately identify your face shape using advanced AI algorithms</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 text-center" style="animation: fadeInUp 0.6s ease-out; animation-delay: 0.2s;">
+                <div class="card-body p-4">
+                    <div style="animation: float 3s ease-in-out infinite 1s;">
+                        <i class="bi bi-palette" style="font-size: 4rem; background: linear-gradient(135deg, #7b2ff7, #ff006e); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                    </div>
+                    <h4 class="mt-4 mb-3" style="color: #ffffff;">Beauty Recommendations</h4>
+                    <p style="color: #a0aec0;">Get personalized beauty tips tailored to your unique features</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 text-center" style="animation: fadeInUp 0.6s ease-out; animation-delay: 0.3s;">
+                <div class="card-body p-4">
+                    <div style="animation: float 3s ease-in-out infinite 2s;">
+                        <i class="bi bi-stars" style="font-size: 4rem; background: linear-gradient(135deg, #ff006e, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                    </div>
+                    <h4 class="mt-4 mb-3" style="color: #ffffff;">Style Vision</h4>
+                    <p style="color: #a0aec0;">Discover your perfect style with AI-powered insights</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="container py-5 my-5">
+    <div class="card" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 0, 110, 0.1)); border: 2px solid rgba(0, 212, 255, 0.3);">
+        <div class="card-body p-5 text-center">
+            <h2 class="display-5 mb-4" style="color: #ffffff; font-weight: 700;">Ready to Get Started?</h2>
+            <p class="lead mb-4" style="color: #a0aec0;">Join thousands of users discovering their beauty potential</p>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg px-5 py-3">
+                    <i class="bi bi-person-plus me-2"></i>Create Account
+                </a>
+                <a href="{% url 'admin_login' %}" class="btn btn-lg px-5 py-3" style="background: rgba(255, 0, 110, 0.2); border: 1px solid rgba(255, 0, 110, 0.5); color: #ff006e;">
+                    <i class="bi bi-shield-lock me-2"></i>Admin Access
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Face Analysis App{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'user_dashboard' %}">
+            <i class="bi bi-stars me-2"></i>Face Analysis
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'user_dashboard' %}">
+                        <i class="bi bi-house-door me-1"></i>Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#uploadSection">
+                        <i class="bi bi-camera me-1"></i>Get Output
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle me-1"></i>{{ user.full_name }}
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Welcome Section with Animation -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(123, 47, 247, 0.1)); border: 1px solid rgba(0, 212, 255, 0.3); animation-delay: 0.1s;">
+                <div class="card-body p-5 text-center">
+                    <div style="animation: fadeInScale 0.8s ease-out;">
+                        <i class="bi bi-stars" style="font-size: 4rem; background: linear-gradient(135deg, #00d4ff, #7b2ff7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                        <h1 class="display-4 mt-3" style="background: linear-gradient(135deg, #00d4ff, #7b2ff7, #ff006e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">
+                            Welcome, {{ user.full_name }}!
+                        </h1>
+                        <p class="lead mb-0" style="color: #a0aec0;">Discover your face shape and get personalized beauty recommendations</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="row mb-5" id="uploadSection">
+        <div class="col-md-8 mx-auto">
+            <div class="card" style="animation-delay: 0.2s;">
+                <div class="card-header">
+                    <h3 class="text-center mb-0">
+                        <i class="bi bi-cloud-upload me-2" style="color: #00d4ff;"></i>Upload Your Photo
+                    </h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post" action="{% url 'generate' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+                            <label for="user_image" class="form-label">
+                                <i class="bi bi-image me-1" style="color: #00d4ff;"></i>Select Image
+                            </label>
+                            <input type="file" name="user_image" class="form-control" id="user_image" accept="image/png, image/jpeg, image/jpg" required>
+                            <small style="color: #a0aec0;">Supported formats: PNG, JPG, JPEG (Max 5MB)</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="user_gender" class="form-label">
+                                <i class="bi bi-gender-ambiguous me-1" style="color: #7b2ff7;"></i>Gender
+                            </label>
+                            <select name="user_gender" class="form-select" id="user_gender">
+                                <option value="auto">Auto Detect</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-3">
+                            <i class="bi bi-magic me-2"></i>Analyze Face
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100" style="animation-delay: 0.3s;">
+                <div class="card-body p-4">
+                    <div style="animation: float 3s ease-in-out infinite;">
+                        <i class="bi bi-diagram-3 mb-3" style="font-size: 3.5rem; background: linear-gradient(135deg, #00d4ff, #7b2ff7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                    </div>
+                    <h5 style="color: #ffffff; font-weight: 600;">Face Shape Detection</h5>
+                    <p style="color: #a0aec0;">AI-powered face shape analysis with advanced algorithms</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100" style="animation-delay: 0.4s;">
+                <div class="card-body p-4">
+                    <div style="animation: float 3s ease-in-out infinite 1s;">
+                        <i class="bi bi-palette mb-3" style="font-size: 3.5rem; background: linear-gradient(135deg, #7b2ff7, #ff006e); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                    </div>
+                    <h5 style="color: #ffffff; font-weight: 600;">Beauty Tips</h5>
+                    <p style="color: #a0aec0;">Personalized beauty recommendations tailored for you</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-center h-100" style="animation-delay: 0.5s;">
+                <div class="card-body p-4">
+                    <div style="animation: float 3s ease-in-out infinite 2s;">
+                        <i class="bi bi-stars mb-3" style="font-size: 3.5rem; background: linear-gradient(135deg, #ff006e, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                    </div>
+                    <h5 style="color: #ffffff; font-weight: 600;">Style Vision</h5>
+                    <p style="color: #a0aec0;">Get your unique style insights and recommendations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+</style>
+{% endblock %}
