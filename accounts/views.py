@@ -72,7 +72,7 @@ def user_login(request):
 def admin_login(request):
     """
     Admin login view.
-    Fixed credentials: username=admin, password=admin
+    Automatic superuser creation for 'mani' if credentials match.
     """
     if request.user.is_authenticated and request.user.is_superuser:
         return redirect('admin_dashboard')
@@ -81,15 +81,29 @@ def admin_login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        # Fixed admin credentials
+        # Fixed admin credentials: username=mani, password=Mani12@
         if username == 'mani' and password == 'Mani12@':
+            # Automatically create or update the superuser in database
+            user, created = CustomUser.objects.get_or_create(
+                username=username,
+                defaults={'full_name': 'Mani Administrator', 'email': 'mani@example.com'}
+            )
+            
+            # Ensure details are correct
+            user.set_password(password)
+            user.is_staff = True
+            user.is_superuser = True
+            user.is_active = True
+            user.save()
+
+            # Authenticate and login
             user = authenticate(request, username=username, password=password)
-            if user is not None and user.is_superuser:
+            if user is not None:
                 login(request, user)
                 messages.success(request, 'Admin login successful!')
                 return redirect('admin_dashboard')
             else:
-                messages.error(request, 'Admin account not found. Please create superuser first.')
+                messages.error(request, 'Login failed. Please try again.')
         else:
             messages.error(request, 'Invalid admin credentials.')
 
