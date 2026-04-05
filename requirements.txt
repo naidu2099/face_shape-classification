@@ -5,3 +5,5 @@ Pillow
 replicate
 requests
 markdown
+gunicorn
+whitenoise
