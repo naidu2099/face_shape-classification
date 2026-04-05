@@ -42,19 +42,26 @@ def generate_styles_and_tips(image_path, output_folder, user_gender='auto'):
     gen_keywords = "professional hairstyle, designer glasses"
     style_vision = "A refined transformation."
     face_description = "A person" # For DALL-E fallback
+    tips = "Enhance your face shape with a natural, healthy glow. Stay hydrated and use quality grooming products."
     
     try:
         url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-        # Analysis + Description for DALL-E
-        prompt = """Analyze this face strictly.
-        Identify Gender, Face Shape, and a brief 10-word description of their current appearance (e.g. 'Young Indian woman in a green sari').
-        Suggest ONE specific BOLD hairstyle and ONE specific stylish eyewear style (MUST include glasses).
-        Return strictly in this format:
-        Gender: [Male/Female]
-        Shape: [Shape Name]
-        Description: [Current appearance]
-        Keywords: [Hairstyle], [Glasses type]
-        Vision: [1 sentence style description]"""
+        # Enhanced analysis for better styling
+        prompt = """Analyze this face with extreme precision for a luxury styling transformation.
+        1. Identify Gender (Male/Female).
+        2. Determine Face Shape (Oval, Round, Square, Heart, Diamond, or Oblong).
+        3. Provide a 'Description' (e.g. 'Person with dark hair').
+        4. Provide 'Keywords' for Image Gen: Focus on ONE specific bold HAIRSTYLE and ONE specific stylish EYEWEAR (glasses).
+        5. Provide 'Vision': A brief, inspiring 1-sentence style goal.
+        6. Provide 'Tips': 3 bullet points of beauty/grooming advice for this specific face shape.
+        
+        Return STRICTLY in this format:
+        Gender: [Gen]
+        Shape: [Shape]
+        Description: [Desc]
+        Keywords: [Hair and Glasses]
+        Vision: [Style vision]
+        Tips: [Bullet point tips]"""
 
         payload = {
             "contents": [{"parts": [{"text": prompt}, {"inline_data": {"mime_type": mime_type, "data": img_b64}}]}]
@@ -70,19 +77,26 @@ def generate_styles_and_tips(image_path, output_folder, user_gender='auto'):
                 desc_match = re.search(r"Description:\s*(.*)", full_text, re.IGNORECASE)
                 keywords_match = re.search(r"Keywords:\s*(.*)", full_text, re.IGNORECASE)
                 vision_match = re.search(r"Vision:\s*(.*)", full_text, re.IGNORECASE)
+                tips_match = re.search(r"Tips:\s*([\s\S]*)", full_text, re.IGNORECASE)
 
                 face_description = desc_match.group(1).strip() if desc_match else "A person"
                 face_shape = shape_match.group(1).strip() if shape_match else "Detected"
-                gen_keywords = keywords_match.group(1).strip() if keywords_match else "stylish hair, designer glasses"
-                style_vision = vision_match.group(1).strip() if vision_match else "Transformation based on your features."
+                gen_keywords = keywords_match.group(1).strip() if keywords_match else "luxury hairstyle, designer glasses"
+                style_vision = vision_match.group(1).strip() if vision_match else "Transformation based on your unique features."
+                tips_content = tips_match.group(1).strip() if tips_match else "Use high-quality products for a better look."
 
                 if user_gender and user_gender.lower() != 'auto':
                     detected_gender = user_gender
                 else:
                     detected_gender = gen_match.group(1).strip() if gen_match else "person"
+                
+                # Combine vision and tips for the UI
+                style_vision = style_vision
+                tips = tips_content
     except Exception as e:
         print(f"Gemini Error: {e}")
         detected_gender = user_gender if user_gender.lower() != 'auto' else "person"
+        tips = "Focus on moisturizing and proper grooming."
 
     # 2. Build Prompts
     extra_realism = "photorealistic studio portrait, 8k, highly detailed, raw photo"
@@ -181,6 +195,6 @@ def generate_styles_and_tips(image_path, output_folder, user_gender='auto'):
         except Exception: traceback.print_exc()
 
     if success:
-        return "generated/" + output_filename, face_shape, "Style transformation complete.", style_vision
+        return "generated/" + output_filename, face_shape, tips, style_vision
     else:
         return "uploads/" + os.path.basename(image_path), face_shape, "Analysis Fallback", "All pathways busy. Propping original."
