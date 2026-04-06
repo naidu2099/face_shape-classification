@@ -44,6 +44,11 @@ def generate_styles_and_tips(image_path, output_folder, user_gender='auto'):
     face_description = "A person" # For DALL-E fallback
     tips = "Enhance your face shape with a natural, healthy glow. Stay hydrated and use quality grooming products."
     
+    # Debug info for Render logs
+    print(f"DEBUG: Starting Analysis for image: {os.path.basename(image_path)}")
+    print(f"DEBUG: GEMINI_API_KEY present: {bool(GEMINI_API_KEY)}")
+    print(f"DEBUG: REPLICATE_TOKEN present: {bool(REPLICATE_TOKEN)}")
+
     try:
         url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
         # Enhanced analysis for better styling
@@ -71,6 +76,7 @@ def generate_styles_and_tips(image_path, output_folder, user_gender='auto'):
             resp = resp_raw.json()
             if "candidates" in resp and resp["candidates"]:
                 full_text = resp["candidates"][0]["content"]["parts"][0]["text"]
+                print(f"DEBUG: Gemini Response Success")
                 
                 gen_match = re.search(r"Gender:\s*(.*)", full_text, re.IGNORECASE)
                 shape_match = re.search(r"Shape:\s*(.*)", full_text, re.IGNORECASE)
@@ -90,11 +96,13 @@ def generate_styles_and_tips(image_path, output_folder, user_gender='auto'):
                 else:
                     detected_gender = gen_match.group(1).strip() if gen_match else "person"
                 
-                # Combine vision and tips for the UI
-                style_vision = style_vision
                 tips = tips_content
+            else:
+                print(f"DEBUG: Gemini returned no candidates: {resp}")
+        else:
+            print(f"DEBUG: Gemini API HTTP Error {resp_raw.status_code}: {resp_raw.text}")
     except Exception as e:
-        print(f"Gemini Error: {e}")
+        print(f"DEBUG: Gemini Analysis Error: {e}")
         detected_gender = user_gender if user_gender.lower() != 'auto' else "person"
         tips = "Focus on moisturizing and proper grooming."
 

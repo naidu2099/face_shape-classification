@@ -35,7 +35,7 @@ def generate(request):
 
         if file and allowed_file(file.name):
             # Create upload directory
-            upload_folder = Path(settings.BASE_DIR) / 'static' / 'uploads'
+            upload_folder = Path(settings.MEDIA_ROOT) / 'uploads'
             upload_folder.mkdir(parents=True, exist_ok=True)
 
             # Save file
@@ -61,7 +61,7 @@ def perform_generation(request, upload_path, user_gender='auto'):
     from face_app.gemini_gen import generate_styles_and_tips
 
     # Create generated folder
-    generated_folder = Path(settings.BASE_DIR) / 'static' / 'generated'
+    generated_folder = Path(settings.MEDIA_ROOT) / 'generated'
     generated_folder.mkdir(parents=True, exist_ok=True)
 
     # Generate styles
@@ -75,16 +75,13 @@ def perform_generation(request, upload_path, user_gender='auto'):
     formatted_tips = markdown.markdown(tips)
     formatted_vision = markdown.markdown(vision)
 
-    # Ensure original image path is correct for template
-    original_image_path = str(upload_path).replace('\\', '/')
-    if 'static/' in original_image_path:
-        original_image_path = original_image_path.split('static/')[-1]
-    else:
-        original_image_path = 'uploads/' + os.path.basename(str(upload_path))
+    # Ensure paths are correct for template (media/ uploads/ or generated/)
+    original_image_url = settings.MEDIA_URL + 'uploads/' + os.path.basename(str(upload_path))
+    generated_image_url = settings.MEDIA_URL + gen_image
 
     return render(request, 'face_app/results.html', {
-        'original_image': original_image_path,
-        'generated_image': gen_image,
+        'original_image': original_image_url,
+        'generated_image': generated_image_url,
         'face_shape': face_shape,
         'beauty_tips': formatted_tips,
         'style_vision': formatted_vision
@@ -99,7 +96,7 @@ def regenerate(request):
     if not image_path or not image_path.startswith('uploads/'):
         return redirect('user_dashboard')
 
-    full_path = Path(settings.BASE_DIR) / 'static' / image_path
+    full_path = Path(settings.MEDIA_ROOT) / 'uploads' / os.path.basename(image_path)
     if not full_path.exists():
         messages.error(request, "Original photo missing.")
         return redirect('user_dashboard')
